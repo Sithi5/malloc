@@ -75,7 +75,8 @@ endif
 ################################################################################
 
 SRC_NAME			:=	malloc.c							\
-						free.c 							    \
+						free.c 								\
+						show_alloc_mem.c 					\
 						realloc.c
 
 
