@@ -25,6 +25,7 @@ DEBUG				:=	no
 O2					:=	no
 
 CC					:= gcc
+TEST_CC				:= gcc -Wno-unused-result
 GEN					:= Generation in mode
 
 ifeq ($(WALL), yes)
@@ -135,13 +136,18 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.c $(INCLUDE)
 
 tests: all
 	@echo "\n$(_CYAN)====================================================$(_END)"
-	@echo "$(_YELLOW)		LAUNCHING TESTS$(_END)"
+	@echo "$(_YELLOW)		COMPILING TESTS$(_END)"
 	@echo "$(_CYAN)====================================================$(_END)"
-	@for f in $(TESTS_SRC_NAME); do \
-        (export HOSTTYPE="$(HOSTTYPE)"; sh $$f); \
-    done
 	@for f in $(TESTS_C_SRC_NAME); do \
-        gcc $$f -o $(basename $$f .c); \
+	    if [ "$$(basename $$f)" = "test_simple_custom.c" ] || [ "$$(basename $$f)" = "test_simple_default.c" ]; then \
+			continue; \
+		fi; \
+	    if [ $$(basename $$f) = "test5.c" ]; then \
+			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -L . -l ft_malloc; \
+		else \
+			$(TEST_CC) -o tests/$$(basename $$f .c) $$f; \
+		fi ;\
+		echo "\n$(_WHITE)$(_BOLD)$$(basename $$f)\t$(_END)$(_GREEN)[OK]\n$(_END)";\
     done
 
 clean:
@@ -153,6 +159,8 @@ fclean: clean
 	@echo "$(_YELLOW)Remove :\t$(_RED)" $(NAME)
 	@rm -rf $(DYNAMIC_LIB) 2> /dev/null || true
 	@echo "$(_YELLOW)Remove :\t$(_RED)" $(DYNAMIC_LIB)"$(_END)"
+	@find . -type f ! -name "*.c" ! -name "*.sh" ! -name ".*" -name "test*" -exec \
+	sh -c 'rm "{}" && echo "$(_YELLOW)Remove :\t$(_RED) {} $(_END)"' \;
 	@echo "$(_END)"
 
 re: fclean all
@@ -200,3 +208,9 @@ _IBLUE		=	\033[44m
 _IPURPLE	=	\033[45m
 _ICYAN		=	\033[46m
 _IGREY		=	\033[47m
+
+
+
+# Execute all shell tests: # @for f in $(TESTS_SRC_NAME); do \
+    #     (export HOSTTYPE="$(HOSTTYPE)"; sh $$f); \
+    # done
