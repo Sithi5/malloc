@@ -52,9 +52,10 @@ Mkfile.old
 dkms.conf
 
 bird
-ft_traceroute
+libft_malloc*.so
+libft_malloc
 .vscode
 toignore
-ft_traceroute.log
+libft_malloc*.log
 traceroute.log
 todolist*
