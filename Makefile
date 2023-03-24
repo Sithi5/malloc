@@ -84,6 +84,8 @@ INCLUDE_NAME		:=	malloc.h
 
 TESTS_SRC_NAME		:= 	./tests/test*.sh					\
 
+TESTS_C_SRC_NAME		:= 	./tests/test*.c					\
+
 LIBRARY_FILE = $(LIBRARY_NAME)_$(HOSTTYPE).so
 
 LDFLAGS = -shared
@@ -137,6 +139,9 @@ tests: all
 	@echo "$(_CYAN)====================================================$(_END)"
 	@for f in $(TESTS_SRC_NAME); do \
         (export HOSTTYPE="$(HOSTTYPE)"; sh $$f); \
+    done
+	@for f in $(TESTS_C_SRC_NAME); do \
+        gcc $$f -o $(basename $$f .c); \
     done
 
 clean:
