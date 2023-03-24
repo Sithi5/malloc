@@ -24,7 +24,7 @@ FSANITIZE			:=	no
 DEBUG				:=	no
 O2					:=	no
 
-CC					:= gcc
+CC					:= gcc -fPIC
 TEST_CC				:= gcc -Wno-unused-result
 GEN					:= Generation in mode
 
@@ -78,6 +78,7 @@ endif
 SRC_NAME			:=	malloc.c							\
 						free.c 								\
 						show_alloc_mem.c 					\
+						utils.c 							\
 						realloc.c
 
 
