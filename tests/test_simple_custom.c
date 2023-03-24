@@ -1,3 +1,5 @@
+#include "malloc.h"
+
 int main() {
     void *p1 = malloc(16);
     void *p2 = malloc(32);

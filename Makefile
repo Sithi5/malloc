@@ -2,7 +2,7 @@
 #                                BINARIES NAME                                 #
 ################################################################################
 
-NAME =  libft_malloc
+NAME =  libft_malloc.so
 
 ################################################################################
 #                                   DEFINE                                     #
@@ -110,7 +110,7 @@ OBJ					:=	$(patsubst $(SRC_PATH)%.c, $(OBJ_PATH)%.o,	$(SRC))
 
 INCLUDE				:=	$(addprefix $(INCLUDE_PATH), $(INCLUDE_NAME))
 
-DYNAMIC_LIB =	$(NAME)_$(HOSTTYPE).so
+DYNAMIC_LIB =	$(basename $(NAME))_$(HOSTTYPE).so
 
 all: $(NAME)
 
@@ -120,16 +120,6 @@ $(NAME): $(DYNAMIC_LIB) $(OBJ)
 	@echo "$(_WHITE)====================================================$(_END)"
 	@ln -sf $(DYNAMIC_LIB) $(NAME)
 	@echo "\n$(_WHITE)$(_BOLD)$@\t$(_END)$(_GREEN)[OK]\n$(_END)"
-	@cp sh/run_linux.sh run.sh
-
-$(NAME): $(OBJ)
-	@echo "\n$(NAME) : $(GEN)"
-	@echo "\n$(_CYAN)====================================================$(_END)"
-	@echo "$(_YELLOW)		COMPILING AND LINKING$(NAME)$(_END)"
-	@echo "$(_CYAN)====================================================$(_END)"
-	@$(CC) -o $(NAME) $(OBJ)
-	@echo "\n$(_WHITE)$(_BOLD)$@\t$(_END)$(_GREEN)[OK]\n$(_END)"
-	@echo "\n"
 
 $(DYNAMIC_LIB) : $(OBJ)
 	@$(CC) $(OBJ) -shared -o $(DYNAMIC_LIB)
@@ -144,15 +134,19 @@ tests: all
 	@echo "\n$(_CYAN)====================================================$(_END)"
 	@echo "$(_YELLOW)		LAUNCHING TESTS$(_END)"
 	@echo "$(_CYAN)====================================================$(_END)"
-	@for f in $(TESTS_SRC_NAME);  do sh $${f}; done;
+	@for f in $(TESTS_SRC_NAME); do \
+        (export HOSTTYPE="$(HOSTTYPE)"; sh $$f); \
+    done
 
 clean:
 	@rm -rf $(OBJ_PATH) 2> /dev/null || true
 	@echo "$(_YELLOW)Remove :\t$(_RED)" $(OBJ_PATH)"$(_END)"
 
 fclean: clean
-	@rm -f $(NAME)
+	@rm -f $(NAME) 2> /dev/null
 	@echo "$(_YELLOW)Remove :\t$(_RED)" $(NAME)
+	@rm -rf $(DYNAMIC_LIB) 2> /dev/null || true
+	@echo "$(_YELLOW)Remove :\t$(_RED)" $(DYNAMIC_LIB)"$(_END)"
 	@echo "$(_END)"
 
 re: fclean all
