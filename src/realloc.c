@@ -13,9 +13,11 @@ void *realloc(void *ptr, size_t size) {
     }
 
     // Align size to a multiple of 8 for better memory alignment
-    size = (size + 7) & ~7;
+    size = (size + 7) - (size + 7) % 8;
 
-    t_block *block = (t_block *) ptr - 1;
+    t_block *block = (t_block *) ptr - 1;   // Get the block structure from the pointer. The -1 is
+                                            // because the pointer points to the data, not the
+                                            // structure
 
     if (block->size >= size) {
         // If the current block is large enough, split it if necessary
