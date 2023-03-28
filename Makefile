@@ -3,6 +3,7 @@
 ################################################################################
 
 NAME =  libft_malloc.so
+TEST_NAME =  tests/test0
 
 ################################################################################
 #                                   DEFINE                                     #
@@ -135,7 +136,9 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.c $(INCLUDE)
 	@echo "$(_END)$(_GREEN)[OK]\t$(_UNDER)$(_YELLOW)\t"	\
 		"COMPILE :$(_END)$(_BOLD)$(_WHITE)\t$<"
 
-tests: all
+tests: $(TEST_NAME)
+
+$(TEST_NAME): $(NAME)
 	@echo "\n$(_CYAN)====================================================$(_END)"
 	@echo "$(_YELLOW)		COMPILING TESTS$(_END)"
 	@echo "$(_CYAN)====================================================$(_END)"
