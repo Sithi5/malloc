@@ -8,16 +8,14 @@ void *malloc(size_t size) {
     }
 
     // Align size to a multiple of 8 for better memory alignment
-    size = (size + 7) & ~7;
+    size = (size + 7) - (size + 7) % 8;
 
     t_block *last = NULL;
     t_block *free_block = find_free_block(&last, size);
-
     if (free_block == NULL) {
         // If no free block was found, request a new block from the system
         free_block = request_space(last, size);
         if (free_block == NULL) {
-            // If the mmap request failed, return NULL
             return NULL;
         }
 

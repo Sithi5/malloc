@@ -139,10 +139,15 @@ tests: all
 	@echo "\n$(_CYAN)====================================================$(_END)"
 	@echo "$(_YELLOW)		COMPILING TESTS$(_END)"
 	@echo "$(_CYAN)====================================================$(_END)"
+	@cp $(NAME) tests/
 	@for f in $(TESTS_C_SRC_NAME); do \
 	    if [ "$$(basename $$f)" = "test_simple_custom.c" ] || [ "$$(basename $$f)" = "test_simple_default.c" ]; then \
 			continue; \
-		fi; \
+		fi ;\
+	    if [ $$(basename $$f) = "test_get_pages_used.c" ]; then \
+			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -lm; \
+			continue; \
+		fi ;\
 	    if [ $$(basename $$f) = "test5.c" ]; then \
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -L . -l ft_malloc; \
 		else \
@@ -160,6 +165,8 @@ fclean: clean
 	@echo "$(_YELLOW)Remove :\t$(_RED)" $(NAME)
 	@rm -rf $(DYNAMIC_LIB) 2> /dev/null || true
 	@echo "$(_YELLOW)Remove :\t$(_RED)" $(DYNAMIC_LIB)"$(_END)"
+	@rm -f ./tests/$(NAME) 2> /dev/null
+	@echo "$(_YELLOW)Remove :\t$(_RED)" ./tests/$(NAME)
 	@find . -type f ! -name "*.c" ! -name "*.sh" ! -name ".*" -name "test*" -exec \
 	sh -c 'rm "{}" && echo "$(_YELLOW)Remove :\t$(_RED) {} $(_END)"' \;
 	@echo "$(_END)"

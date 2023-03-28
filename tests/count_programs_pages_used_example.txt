@@ -1,0 +1,1 @@
+./test_get_pages_used $(./run_linux.sh /usr/bin/time -v ./test1 2>&1 | grep "Maximum resident" | awk '{print $NF}')
