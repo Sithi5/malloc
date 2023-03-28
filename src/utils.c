@@ -90,27 +90,3 @@ t_block *split_block(t_block *block, size_t size) {
 
     return block;
 }
-
-void write_int(int num) {
-    char buffer[20];
-    int i = 0;
-
-    if (num == 0) {
-        write(STDOUT_FILENO, "0", 1);
-        return;
-    }
-
-    if (num < 0) {
-        write(STDOUT_FILENO, "-", 1);
-        num = -num;
-    }
-
-    while (num > 0) {
-        buffer[i++] = (num % 10) + '0';
-        num /= 10;
-    }
-
-    while (i > 0) {
-        write(STDOUT_FILENO, &buffer[--i], 1);
-    }
-}
