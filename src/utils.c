@@ -90,3 +90,56 @@ t_block *split_block(t_block *block, size_t size) {
 
     return block;
 }
+
+size_t ft_write_dec_number(size_t num) {
+    size_t len;
+    size_t digits;
+    size_t tmp;
+    char c;
+    size_t i;
+
+    len = 0;
+    if (num == 0) {
+        write(1, "0", 1);
+        len = 1;
+    } else {
+        digits = 0;
+        tmp = num;
+        while (tmp > 0) {
+            tmp /= 10;
+            digits++;
+        }
+        i = 0;
+        while (i++ < digits) {
+            c = '0' + (num % 10);
+            write(1, &c, 1);
+            num /= 10;
+        }
+        len = digits;
+    }
+    return len;
+}
+
+size_t ft_write_hex_pointer(void *ptr) {
+    char hex[16];
+    unsigned long value;
+    size_t digit;
+    size_t len;
+    size_t i;
+
+    hex[0] = '0';
+    hex[1] = 'x';
+    value = (unsigned long) ptr;
+    i = 14;
+    while (--i >= 2) {
+        digit = value % 16;
+        value /= 16;
+        hex[i] = (digit < 10) ? ('0' + digit) : ('A' + digit - 10);
+    }
+    len = 0;
+    while (hex[len] != '\0') {
+        write(1, &hex[len], 1);
+        len++;
+    }
+    return len;
+}

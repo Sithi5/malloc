@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include <unistd.h>
 
 #define M (1024 * 1024)

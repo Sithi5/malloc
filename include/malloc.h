@@ -50,6 +50,8 @@ extern t_zone g_zone;
 t_block *find_free_block(t_block **last, size_t size);
 t_block *request_space(t_block *last, size_t size);
 t_block *split_block(t_block *block, size_t size);
+size_t ft_write_dec_number(size_t num);
+size_t ft_write_hex_pointer(void *ptr);
 
 // free
 void free(void *ptr);
