@@ -64,3 +64,4 @@ todolist*
 !*.sh
 test*
 !test*.c
+todo.txt
