@@ -1,6 +1,6 @@
 #include "malloc.h"
 
-void merge_free_blocks(t_block *block) {
+static void merge_free_blocks(t_block *block) {
     // Merge with the next block if it is free
     if (block->next && block->next->free) {
         block->size += block->next->size + sizeof(t_block);
@@ -8,7 +8,7 @@ void merge_free_blocks(t_block *block) {
     }
 }
 
-int is_entire_zone_free(t_block *zone_start) {
+static int is_entire_zone_free(t_block *zone_start) {
     while (zone_start) {
         if (!zone_start->free) {
             return 0;
@@ -18,7 +18,7 @@ int is_entire_zone_free(t_block *zone_start) {
     return 1;
 }
 
-void try_release_zone(t_block **zone) {
+static void try_release_zone(t_block **zone) {
     if (is_entire_zone_free(*zone)) {
         munmap(*zone, (*zone)->size + sizeof(t_block));
         *zone = NULL;
