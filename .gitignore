@@ -60,9 +60,8 @@ libft_malloc*.log
 traceroute.log
 todolist*
 
-!*.c
-!*.sh
-test*
-!test*.c
+tests/*
+!tests/*.sh
+!tests/*.c
 todo.txt
 toignore/*
