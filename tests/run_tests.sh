@@ -1,5 +1,12 @@
 #!/bin/sh
 
+ITERATIONS=100
+TEST_MALLOC=1
+TEST_FREE=0
+TEST_FREE_QUALITY=0
+DISPLAY_ERRORS=1
+
+
 clear
 
 _GREEN=`tput setaf 2`
@@ -7,35 +14,38 @@ _YELLOW=`tput setaf 3`
 _CYAN=`tput setaf 3`
 _END=`tput sgr0`
 
+
 # echo filename
 echo "\n\n\n\n${_YELLOW}$0 :${_END}\n\n"
 
 malloc()
 {
 	echo "\n${_GREEN}Test my Malloc:${_END}\n"
-	it=20
-	valid=0
+	valid_my_malloc=0
 	i=0
-	while [ $i -lt $it ]
+	while [ $i -lt $ITERATIONS ]
 	do
 		test0=`./test_get_pages_used $(./run_linux.sh /usr/bin/time -v ./test0 2>&1 | grep "Maximum" | awk '{print $NF}')`
 		test1=`./test_get_pages_used $(./run_linux.sh /usr/bin/time -v ./test1 2>&1 | grep "Maximum" | awk '{print $NF}')`
 		ret=`echo "$test1 - $test0" | bc`
 		if [ $ret -gt 254 -a $ret -lt 273 ]
 		then
-			valid=$(($valid + 1))
+			valid_my_malloc=$(($valid_my_malloc + 1))
 		else
-			echo "\n$ret"
+			if [ $DISPLAY_ERRORS -eq 1 ]
+			then
+				echo "\n$ret"
+			fi
 		fi
-		printf "\rValue:\t$ret\tValid : $valid/$it"
+		printf "\rValue:\t$ret\tValid : $valid_my_malloc/$ITERATIONS"
 		i=$(($i + 1))
 	done
-	echo "\n$valid/$it passed the condition"
+	echo "\n$valid_my_malloc/$ITERATIONS passed the condition"
 
 	echo "\n${_GREEN}Test real Malloc:${_END}\n"
 	i=0
 	valid_real_malloc=0
-	while [ $i -lt $it ]
+	while [ $i -lt $ITERATIONS ]
 	do
 		test0=`./test_get_pages_used $(/usr/bin/time -v ./test0 2>&1 | grep "Maximum" | awk '{print $NF}')`
 		test1=`./test_get_pages_used $(/usr/bin/time -v ./test1 2>&1 | grep "Maximum" | awk '{print $NF}')`
@@ -44,66 +54,111 @@ malloc()
 		then
 			valid_real_malloc=$(($valid_real_malloc + 1))
 		else
-			echo "\n$ret"
+			if [ $DISPLAY_ERRORS -eq 1 ]
+			then
+				echo "\n$ret"
+			fi
 		fi
-		printf "\rValue:\t$ret\tvalid : $valid_real_malloc/$it"
+		printf "\rValue:\t$ret\tvalid : $valid_real_malloc/$ITERATIONS"
 		i=$(($i + 1))
 	done
-	echo "\n$valid_real_malloc/$it passed the condition"
+	echo "\n$valid_real_malloc/$ITERATIONS passed the condition"
 
 	echo "\n${_GREEN}Comparing both Malloc results:${_END}\n"
-	echo "\n$valid/$it vs $valid_real_malloc/$it"
+	echo "\n$valid_my_malloc/$ITERATIONS vs $valid_real_malloc/$ITERATIONS"
 }
 
-# free()
-# {
-# 	echo "\nFree test:\n"
-# 	read -p 'How many iterations: ' it
-# 	j=0
-# 	i=0
-# 	while [ $i -lt $it ]
-# 	do
+free()
+{
+	echo "\n${_GREEN}Test my Free:${_END}\n"
+	valid_my_free=0
+	i=0
+	while [ $i -lt $ITERATIONS ]
+	do
+		test1=`./test_get_pages_used $(./run_linux.sh /usr/bin/time -v ./test1 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		test2=`./test_get_pages_used $(./run_linux.sh /usr/bin/time -v ./test2 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		ret=`echo "$test1 - $test2" | bc`
+		if [ $ret -ge 0 ]
+		then
+			valid_my_free=$(($valid_my_free + 1))
+		else
+			if [ $DISPLAY_ERRORS -eq 1 ]
+			then
+				echo "\n$ret"
+			fi
+		fi
+		printf "\rValue:\tTest1:\t$test1\tTest2:\t$test2\tValid : $valid_my_free/$ITERATIONS"
+		i=$(($i + 1))
+	done
+	echo "\n$valid_my_free/$ITERATIONS passed the condition"
+	echo "\n${_GREEN}Test real Free:${_END}\n"
+	valid_real_free=0
+	i=0
+	while [ $i -lt $ITERATIONS ]
+	do
+		test1=`./test_get_pages_used $(/usr/bin/time -v ./test1 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		test2=`./test_get_pages_used $(/usr/bin/time -v ./test2 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		ret=`echo "$test1 - $test2" | bc`
+		if [ $ret -ge 0 ]
+		then
+			valid_real_free=$(($valid_real_free + 1))
+		else
+			if [ $DISPLAY_ERRORS -eq 1 ]
+			then
+				echo "\n$ret"
+			fi
+		fi
+		printf "\rValue:\tTest1:\t$test1\tTest2:\t$test2\tValid : $valid_real_free/$ITERATIONS"
+		i=$(($i + 1))
+	done
+	echo "\n$valid_real_free/$ITERATIONS passed the condition"
 
-# 		test1=`./run.sh /usr/bin/time -v ./test1 2>&1 | grep "Minor" | cut -d " " -f7`
-# 		test2=`./run.sh /usr/bin/time -v ./test2 2>&1 | grep "Minor" | cut -d " " -f7`
-# 		ret=`echo "$test1 - $test2" | bc`
-# 		if [ $ret -ge 0 ]
-# 		then
-# 			j=$(($j + 1))
-# 		else
-# 			echo "\n$ret"
-# 		fi
-# 		printf "\rValue:\tTest1:\t$test1\tTest2:\t$test2\tValid : $j/$it"
-# 		i=$(($i + 1))
-# 	done
-# 	echo "\n$j/$it passed the condition"
-# }
+	echo "\n${_GREEN}Comparing both Free results:${_END}\n"
+	echo "\n$valid_my_free/$ITERATIONS vs $valid_real_free/$ITERATIONS"
+}
 
-# free_quality()
-# {
-# 	echo "\nQuality of the free:\n"
-# 	read -p 'How many iterations: ' it
-# 	j=0
-# 	i=0
-# 	while [ $i -lt $it ]
-# 	do
-# 		real_test0=`/usr/bin/time -v ./test0 2>&1 | grep "Minor" | cut -d " " -f7`
-# 		real_test2=`/usr/bin/time -v ./test2 2>&1 | grep "Minor" | cut -d " " -f7`
-# 		test0=`./run.sh /usr/bin/time -v ./test0 2>&1 | grep "Minor" | cut -d " " -f7`
-# 		test2=`./run.sh /usr/bin/time -v ./test2 2>&1 | grep "Minor" | cut -d " " -f7`
-# 		real_ret=`echo "$real_test2 - $real_test0"| bc`
-# 		ret=`echo "$test2 - $test0" | bc`
-# 		if [ $real_ret -ge $ret ]
-# 		then
-# 			j=$(($j + 1))
-# 		else
-# 			echo "\nReal: $real_ret\nMine: $ret"
-# 		fi
-# 		printf "\rValid : $j/$it"
-# 		i=$(($i + 1))
-# 	done
-# 	echo "\n$j/$it passed the condition"
-# }
+free_quality()
+{
+	echo "\n${_GREEN}Test my Free quality:${_END}\n"
+	i=0
+	valid_my_free_quality=0
+	while [ $i -lt $ITERATIONS ]
+	do
+		test0=`./test_get_pages_used $(./run_linux.sh /usr/bin/time -v ./test0 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		test2=`./test_get_pages_used $(./run_linux.sh /usr/bin/time -v ./test2 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		ret=`echo "$test2 - $test0" | bc`
+		if [ $ret -ge 0 -a $ret -le 2 ]
+		then
+			valid_my_free_quality=$(($valid_my_free_quality + 1))
+		else
+			if [ $DISPLAY_ERRORS -eq 1 ]
+			then
+				echo "\n$ret"
+			fi
+		fi
+		printf "\rValue:\tTest2:\t$test2\tTest0:\t$test0\tValid : $valid_my_free_quality/$ITERATIONS"
+		i=$(($i + 1))
+	done
+
+	echo "\n${_GREEN}Test real Free quality:${_END}\n"
+	i=0
+	valid_real_free_quality=0
+	while [ $i -lt $ITERATIONS ]
+	do
+		test0=`./test_get_pages_used $(/usr/bin/time -v ./test0 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		test2=`./test_get_pages_used $(/usr/bin/time -v ./test2 2>&1 | grep "Maximum" | awk '{print $NF}')`
+		ret=`echo "$test2 - $test0" | bc`
+		if [ $ret -ge 0 -a $ret -le 2 ]
+		then
+			valid_real_free_quality=$(($valid_real_free_quality + 1))
+		fi
+		printf "\rValue:\tTest2:\t$test2\tTest0:\t$test0\tValid : $valid_real_free_quality/$ITERATIONS"
+		i=$(($i + 1))
+	done
+
+	echo "\n${_GREEN}Comparing both Free results:${_END}\n"
+	echo "\n$valid_my_free_quality/$ITERATIONS vs $valid_real_free_quality/$ITERATIONS"
+}
 
 # realloc()
 # {
@@ -175,6 +230,34 @@ malloc()
 # 	fi
 # }
 
-malloc
+result()
+{
+	echo "\n${_GREEN}RESULTS SUMMARY:${_END}\n"
+	echo "${_GREEN}Comparing both Malloc results:${_END}\n"
+	echo "$valid_my_malloc/$ITERATIONS vs $valid_real_malloc/$ITERATIONS"
+	echo "${_GREEN}Comparing both Free results:${_END}\n"
+	echo "$valid_my_free/$ITERATIONS vs $valid_real_free/$ITERATIONS"
+	echo "${_GREEN}Comparing both Free Quality results:${_END}"
+	echo "\n$valid_my_free_quality/$ITERATIONS vs $valid_real_free_quality/$ITERATIONS"
+}
+
+# if TEST_MALLOC is set to 1, the script will test the malloc function
+
+if [ $TEST_MALLOC -eq 1 ]
+then
+	malloc
+fi
+
+if [ $TEST_FREE -eq 1 ]
+then
+	free
+fi
+
+if [ $TEST_FREE_QUALITY -eq 1 ]
+then
+	free_quality
+fi
+
+result
 echo
 echo "That's all folks!"

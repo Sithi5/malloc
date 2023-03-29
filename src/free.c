@@ -8,12 +8,12 @@ static void merge_free_blocks(t_block *block) {
     }
 }
 
-static int is_entire_zone_free(t_block *zone_start) {
-    while (zone_start) {
-        if (!zone_start->free) {
+static int is_entire_zone_free(t_block *zone) {
+    while (zone) {
+        if (!zone->free) {
             return 0;
         }
-        zone_start = zone_start->next;
+        zone = zone->next;
     }
     return 1;
 }
