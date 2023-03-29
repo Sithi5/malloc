@@ -80,6 +80,7 @@ SRC_NAME			:=	malloc.c							\
 						free.c 								\
 						show_alloc_mem.c 					\
 						utils.c 							\
+						blocks_utils.c 						\
 						realloc.c
 
 

@@ -65,3 +65,4 @@ todolist*
 test*
 !test*.c
 todo.txt
+toignore/*
