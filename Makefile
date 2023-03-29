@@ -138,6 +138,7 @@ $(OBJ_PATH)%.o: $(SRC_PATH)%.c $(INCLUDE)
 		"COMPILE :$(_END)$(_BOLD)$(_WHITE)\t$<"
 
 tests: $(TEST_NAME)
+	@cd ./tests && ./run_tests.sh
 
 $(TEST_NAME): $(NAME)
 	@echo "\n$(_CYAN)====================================================$(_END)"
@@ -158,7 +159,6 @@ $(TEST_NAME): $(NAME)
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f; \
 		fi ;\
 		echo "\n$(_WHITE)$(_BOLD)$$(basename $$f)\t$(_END)$(_GREEN)[OK]\n$(_END)";\
-    done
 
 clean:
 	@rm -rf $(OBJ_PATH) 2> /dev/null || true
