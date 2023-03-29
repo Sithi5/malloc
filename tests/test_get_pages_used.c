@@ -24,7 +24,6 @@ int main(int argc, char **argv) {
     int page_size = getpagesize();
     max_resident_set_size_kb = atoi(argv[1]);
     pages_reclamed = get_pages_reclamed(max_resident_set_size_kb, page_size);
-    printf("%i pages reclaimed for %i max_resident_set_size_kb\n", pages_reclamed,
-           max_resident_set_size_kb);
+    printf("%i", pages_reclamed);
     return 0;
 }
