@@ -34,7 +34,7 @@ void free(void *ptr) {
     t_block *block = (t_block *) ptr - 1;
 
     // Mark the block as free
-    block->free = 1;
+    block->free = true;
 
     // Merge with adjacent free blocks
     merge_free_blocks(block);
@@ -52,6 +52,12 @@ void free(void *ptr) {
     }
 
     // Try releasing memory zones back to the system
-    try_release_zone(&g_malloc.zone.tiny);
-    try_release_zone(&g_malloc.zone.small);
+
+    if (block->size <= TINY_MAX) {
+        try_release_zone(&g_malloc.zone.tiny);
+    } else if (block->size <= SMALL_MAX) {
+        try_release_zone(&g_malloc.zone.small);
+    } else {
+        try_release_zone(&g_malloc.zone.large);
+    }
 }
