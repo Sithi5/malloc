@@ -41,7 +41,7 @@ void free(void *ptr) {
 
     // Check if the previous block is free and merge if necessary
     if (block->next) {
-        t_block *prev = g_zone.tiny;
+        t_block *prev = g_malloc.zone.tiny;
         while (prev && prev->next != block) {
             prev = prev->next;
         }
@@ -52,6 +52,6 @@ void free(void *ptr) {
     }
 
     // Try releasing memory zones back to the system
-    try_release_zone(&g_zone.tiny);
-    try_release_zone(&g_zone.small);
+    try_release_zone(&g_malloc.zone.tiny);
+    try_release_zone(&g_malloc.zone.small);
 }

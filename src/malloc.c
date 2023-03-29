@@ -1,6 +1,6 @@
 #include "malloc.h"
 
-t_zone g_zone = {NULL, NULL, NULL};
+t_malloc g_malloc = {};
 
 void *malloc(size_t size) {
     if (size == 0) {
@@ -19,12 +19,12 @@ void *malloc(size_t size) {
             return NULL;
         }
 
-        if (size <= TINY_MAX && g_zone.tiny == NULL) {
-            g_zone.tiny = free_block;
-        } else if (size <= SMALL_MAX && g_zone.small == NULL) {
-            g_zone.small = free_block;
-        } else if (g_zone.large == NULL) {
-            g_zone.large = free_block;
+        if (size <= TINY_MAX && g_malloc.zone.tiny == NULL) {
+            g_malloc.zone.tiny = free_block;
+        } else if (size <= SMALL_MAX && g_malloc.zone.small == NULL) {
+            g_malloc.zone.small = free_block;
+        } else if (g_malloc.zone.large == NULL) {
+            g_malloc.zone.large = free_block;
         }
     } else {
         // If a free block was found, split it if necessary

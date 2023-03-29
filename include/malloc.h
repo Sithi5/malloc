@@ -17,7 +17,7 @@
 #define SMALL_MAX       1024   // 1 KB
 #define PAGE_SIZE       (getpagesize())
 #define TINY_ZONE_SIZE  (PAGE_SIZE * 2)    // ( 4096 * 2) / 64 = 128
-#define SMALL_ZONE_SIZE (PAGE_SIZE * 32)   // ( 4096 * 32) / 1024 = 128
+#define SMALL_ZONE_SIZE (PAGE_SIZE * 32)   // ( 4096 * 32) / 1024 = 128. Total size  = 131072
 
 /****************************************************************************/
 /*                          STRUCTS                                         */
@@ -25,22 +25,27 @@
 
 typedef struct s_block {
     size_t size;
+    size_t remaining_memory;
     struct s_block *next;
-    int free;
+    bool free;
 } t_block;
 
-// Memory zone structure
 typedef struct s_zone {
     t_block *tiny;
     t_block *small;
     t_block *large;
 } t_zone;
 
+typedef struct s_malloc {
+    t_zone zone;
+    int number_of_requests;
+} t_malloc;
+
 /****************************************************************************/
 /*                          GLOBALS                                         */
 /****************************************************************************/
 
-extern t_zone g_zone;
+extern t_malloc g_malloc;
 
 /****************************************************************************/
 /*                          FUNCTIONS DEFINITIONS                           */
@@ -48,7 +53,7 @@ extern t_zone g_zone;
 
 // blocks_utils
 t_block *find_free_block(t_block **last, size_t size);
-t_block *request_space(t_block **last, size_t size);
+t_block *request_space(t_block *last, size_t size);
 t_block *split_block(t_block *block, size_t size);
 
 // utils

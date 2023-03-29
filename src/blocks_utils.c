@@ -10,11 +10,11 @@ t_block *find_free_block(t_block **last, size_t size) {
     t_block *current = NULL;
 
     if (size <= TINY_MAX) {
-        current = g_zone.tiny;
+        current = g_malloc.zone.tiny;
     } else if (size <= SMALL_MAX) {
-        current = g_zone.small;
+        current = g_malloc.zone.small;
     } else {
-        current = g_zone.large;
+        current = g_malloc.zone.large;
     }
 
     while (current && !(current->free && current->size >= size)) {
@@ -34,34 +34,69 @@ t_block *find_free_block(t_block **last, size_t size) {
 t_block *request_space(t_block *last, size_t size) {
     size_t total_size = sizeof(t_block) + size;
     size_t zone_size = 0;
+    t_block *block;
+    t_block *zone;
+    size_t block_offset;
 
+    zone = NULL;
     if (size <= TINY_MAX) {
+        ft_putstr("Request TINY: ");
         zone_size = TINY_ZONE_SIZE;
+        zone = g_malloc.zone.tiny;
     } else if (size <= SMALL_MAX) {
+        ft_putstr("Request SMALL: ");
         zone_size = SMALL_ZONE_SIZE;
+        zone = g_malloc.zone.small;
     } else {
-        zone_size = total_size;
+        ft_putstr("Request LARGE: ");
+        zone = NULL;
     }
 
-    // Request memory using mmap
-    t_block *block =
-        (t_block *) mmap(0, zone_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1,
-                         0);   // Read and write, private, anonymous. fifth and sixth arguments are
-                               // ignored because of MAP_ANONYMOUS
-    if (block == MAP_FAILED) {
-        return NULL;
+    if (zone != NULL && zone->remaining_memory >= total_size + sizeof(t_block)) {
+        ft_putstr("zone remaining memory: ");
+        ft_putnbr(zone->remaining_memory);
+        ft_putstr("\n");
+        while (zone->next) {
+            zone = zone->next;
+        }
+        if (size <= TINY_MAX) {
+            block_offset = TINY_ZONE_SIZE - g_malloc.zone.tiny->remaining_memory - total_size;
+            block = (t_block *) ((char *) g_malloc.zone.tiny + sizeof(t_block) + block_offset);
+            g_malloc.zone.tiny->remaining_memory -= total_size + sizeof(t_block);
+        } else if (size <= SMALL_MAX) {
+            block_offset = SMALL_ZONE_SIZE - g_malloc.zone.small->remaining_memory - total_size;
+            block = (t_block *) ((char *) g_malloc.zone.small + sizeof(t_block) + block_offset);
+            g_malloc.zone.small->remaining_memory -= total_size + sizeof(t_block);
+        }
+        block->size = size;
+        block->next = NULL;
+        block->free = false;
+        zone->next = block;
+    } else {
+        ft_putstr("mmap of size: ");
+        ft_putnbr(zone_size);
+        ft_putstr("\n");
+        block =
+            (t_block *) mmap(0, zone_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1,
+                             0);   // Read and write, private, anonymous. fifth and sixth
+                                   // arguments are ignored because of MAP_ANONYMOUS
+
+        if (block == MAP_FAILED) {
+            return NULL;
+        }
+        block->remaining_memory = zone_size - total_size > 0 ? zone_size - total_size : 0;
+        block->size = size;
+        block->next = NULL;
+        block->free = false;
+
+        if (size <= TINY_MAX) {
+            g_malloc.zone.tiny = block;
+            ft_putstr("\tCreating new tiny zone\n");
+        } else if (size <= SMALL_MAX) {
+            ft_putstr("\tCreating new small zone\n");
+            g_malloc.zone.small = block;
+        }
     }
-
-    // Initialize the block
-    block->size = size;
-    block->next = NULL;
-    block->free = false;
-
-    // Update the last block's next pointer
-    if (last) {
-        last->next = block;
-    }
-
     return block;
 }
 
