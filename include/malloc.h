@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 #define TINY_MAX        64
-#define SMALL_MAX       1024
+#define SMALL_MAX       1024   // 1 KB
 #define PAGE_SIZE       (getpagesize())
 #define TINY_ZONE_SIZE  (PAGE_SIZE * 2)    // ( 4096 * 2) / 64 = 128
 #define SMALL_ZONE_SIZE (PAGE_SIZE * 32)   // ( 4096 * 32) / 1024 = 128
