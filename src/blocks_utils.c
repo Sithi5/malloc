@@ -95,6 +95,15 @@ t_block *request_space(t_block *last, size_t size) {
         } else if (size <= SMALL_MAX) {
             ft_putstr("\tCreating new small zone\n");
             g_malloc.zone.small = block;
+        } else if (g_malloc.zone.large == NULL) {
+            ft_putstr("\tCreating new large zone\n");
+            g_malloc.zone.large = block;
+        } else {
+            ft_putstr("\tAdding to large zone\n");
+            while (g_malloc.zone.large->next) {
+                g_malloc.zone.large = g_malloc.zone.large->next;
+            }
+            g_malloc.zone.large->next = block;
         }
     }
     return block;
