@@ -22,7 +22,7 @@ WEXTRA				:=	yes
 WSHADOW				:=	yes
 WERROR				:=	no
 FSANITIZE			:=	no
-DEBUG				:=	no
+DEBUG				:=	yes
 O2					:=	no
 
 CC					:= gcc -fPIC
@@ -146,19 +146,22 @@ $(TEST_NAME): $(NAME)
 	@echo "$(_CYAN)====================================================$(_END)"
 	@cp $(NAME) tests/
 	@for f in $(TESTS_C_SRC_NAME); do \
-	    if [ "$$(basename $$f)" = "test_simple_custom.c" ] || [ "$$(basename $$f)" = "test_simple_default.c" ]; then \
+		echo "Filename: ";\
+		echo "$$(basename $$f)"; \
+		if [ "$$(basename $$f)" = "test_simple_custom.c" ] || [ "$$(basename $$f)" = "test_simple_default.c" ]; then \
 			continue; \
 		fi ;\
-	    if [ $$(basename $$f) = "test_get_pages_used.c" ]; then \
+		if [ $$(basename $$f) = "test_get_pages_used.c" ]; then \
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -lm; \
 			continue; \
 		fi ;\
-	    if [ $$(basename $$f) = "test5.c" ]; then \
+		if [ $$(basename $$f) = "test5.c" ]; then \
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -L . -l ft_malloc; \
 		else \
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f; \
 		fi ;\
 		echo "\n$(_WHITE)$(_BOLD)$$(basename $$f)\t$(_END)$(_GREEN)[OK]\n$(_END)";\
+	done
 
 clean:
 	@rm -rf $(OBJ_PATH) 2> /dev/null || true
