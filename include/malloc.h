@@ -13,11 +13,25 @@
 #include <sys/resource.h>
 #include <unistd.h>
 
-#define TINY_MAX        64
-#define SMALL_MAX       1024   // 1 KB
+/****************************************************************************/
+/*                          DEFINES                                         */
+/****************************************************************************/
+
+#define PROGRAM_NAME    "malloc"
+#define PROGRAM_VERSION "1.0.0"
+#define PROGRAM_AUTHOR  "mabouce"
+
+#ifdef DEBUG
+#define DEBUG 1
+#else
+#define DEBUG 0
+#endif
+
 #define PAGE_SIZE       (getpagesize())
-#define TINY_ZONE_SIZE  (PAGE_SIZE * 2)    // ( 4096 * 2) / 64 = 128
-#define SMALL_ZONE_SIZE (PAGE_SIZE * 32)   // ( 4096 * 32) / 1024 = 128. Total size  = 131072
+#define TINY_MAX        PAGE_SIZE / 100
+#define SMALL_MAX       PAGE_SIZE
+#define TINY_ZONE_SIZE  (PAGE_SIZE + sizeof(t_block))
+#define SMALL_ZONE_SIZE (PAGE_SIZE * 100 + sizeof(t_block))
 
 /****************************************************************************/
 /*                          STRUCTS                                         */
