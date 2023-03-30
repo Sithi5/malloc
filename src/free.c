@@ -26,16 +26,25 @@ static void try_release_zone(t_block **zone) {
 }
 
 void free(void *ptr) {
+    ZoneType zone_type;
+    t_block *block;
+
     if (ptr == NULL) {
         return;
     }
 
+    block = (t_block *) ptr - 1;
+
+    zone_type = is_valid_block(block);
+    // Check if the block is a valid memory block
+    if (zone_type == INVALID_ZONE) {
+        return;
+    }
+
     // Get the block pointer from the memory pointer
-    t_block *block = (t_block *) ptr - 1;
 
     // Mark the block as free
     block->free = true;
-
     // Merge with adjacent free blocks
     merge_free_blocks(block);
 

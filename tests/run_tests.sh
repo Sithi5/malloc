@@ -3,7 +3,7 @@
 ITERATIONS=100
 TEST_MALLOC=1
 TEST_FREE=0
-TEST_FREE_QUALITY=0
+TEST_FREE_QUALITY=1
 DISPLAY_ERRORS=0
 
 
@@ -91,30 +91,6 @@ free()
 		i=$(($i + 1))
 	done
 	echo "\n$valid_my_free/$ITERATIONS passed the condition"
-	echo "\n${_GREEN}Test real Free:${_END}\n"
-	valid_real_free=0
-	i=0
-	while [ $i -lt $ITERATIONS ]
-	do
-		test1=`./test_get_pages_used $(/usr/bin/time -v ./test1 2>&1 | grep "Maximum" | awk '{print $NF}')`
-		test2=`./test_get_pages_used $(/usr/bin/time -v ./test2 2>&1 | grep "Maximum" | awk '{print $NF}')`
-		ret=`echo "$test1 - $test2" | bc`
-		if [ $ret -ge 0 ]
-		then
-			valid_real_free=$(($valid_real_free + 1))
-		else
-			if [ $DISPLAY_ERRORS -eq 1 ]
-			then
-				echo "\n$ret"
-			fi
-		fi
-		printf "\rValue:\tTest1:\t$test1\tTest2:\t$test2\tValid : $valid_real_free/$ITERATIONS"
-		i=$(($i + 1))
-	done
-	echo "\n$valid_real_free/$ITERATIONS passed the condition"
-
-	echo "\n${_GREEN}Comparing both Free results:${_END}\n"
-	echo "\n$valid_my_free/$ITERATIONS vs $valid_real_free/$ITERATIONS"
 }
 
 free_quality()
@@ -160,21 +136,21 @@ free_quality()
 	echo "\n$valid_my_free_quality/$ITERATIONS vs $valid_real_free_quality/$ITERATIONS"
 }
 
-# realloc()
-# {
-# 	echo "\nRealloc test:\n"
-# 	./run.sh ./test3 > realloc_test
-# 	test3=`cat -e realloc_test`
-# 	printf "Bonjour\nBonjour\n" > real_realloc_test
-# 	result=`cat -e real_realloc_test`
-# 	if [ "$test3" = "$result" ]
-# 	then
-# 		echo "Valid"
-# 	else
-# 		echo "Not Valid"
-# 	fi
-# 	rm realloc_test real_realloc_test
-# }
+realloc()
+{
+	echo "\nRealloc test:\n"
+	./run.sh ./test3 > realloc_test
+	test3=`cat -e realloc_test`
+	printf "Bonjour\nBonjour\n" > real_realloc_test
+	result=`cat -e real_realloc_test`
+	if [ "$test3" = "$result" ]
+	then
+		echo "Valid"
+	else
+		echo "Not Valid"
+	fi
+	rm realloc_test real_realloc_test
+}
 
 # realloc_more()
 # {
@@ -235,8 +211,6 @@ result()
 	echo "\n${_GREEN}RESULTS SUMMARY:${_END}\n"
 	echo "${_GREEN}Comparing both Malloc results:${_END}\n"
 	echo "$valid_my_malloc/$ITERATIONS vs $valid_real_malloc/$ITERATIONS"
-	echo "${_GREEN}Comparing both Free results:${_END}\n"
-	echo "$valid_my_free/$ITERATIONS vs $valid_real_free/$ITERATIONS"
 	echo "${_GREEN}Comparing both Free Quality results:${_END}"
 	echo "\n$valid_my_free_quality/$ITERATIONS vs $valid_real_free_quality/$ITERATIONS"
 }

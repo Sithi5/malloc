@@ -56,6 +56,12 @@ typedef struct s_malloc {
 } t_malloc;
 
 /****************************************************************************/
+/*                          ENUM                                            */
+/****************************************************************************/
+
+typedef enum { INVALID_ZONE, TINY_ZONE, SMALL_ZONE, LARGE_ZONE } ZoneType;
+
+/****************************************************************************/
 /*                          GLOBALS                                         */
 /****************************************************************************/
 
@@ -69,6 +75,7 @@ extern t_malloc g_malloc;
 t_block *find_free_block(t_block **last, size_t size);
 t_block *request_space(size_t size);
 t_block *split_block(t_block *block, size_t size);
+ZoneType is_valid_block(t_block *block);
 
 // utils
 size_t ft_write_dec_number(size_t num);
@@ -76,6 +83,7 @@ size_t ft_write_hex_pointer(void *ptr);
 void ft_putchar(char c);
 void ft_putnbr(int nb);
 void ft_putstr(char const *str);
+void *ft_memcpy(void *dest, const void *src, size_t n);
 
 // free
 void free(void *ptr);

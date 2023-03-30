@@ -26,7 +26,7 @@ DEBUG				:=	yes
 O2					:=	no
 
 CC					:= gcc -fPIC
-TEST_CC				:= gcc -Wno-unused-result
+TEST_CC				:= gcc -Wno-unused-result -Wno-impl
 GEN					:= Generation in mode
 
 ifeq ($(WALL), yes)
@@ -79,6 +79,7 @@ endif
 SRC_NAME			:=	malloc.c							\
 						free.c 								\
 						show_alloc_mem.c 					\
+						allocation.c 						\
 						utils.c 							\
 						blocks_utils.c 						\
 						realloc.c
@@ -155,10 +156,14 @@ $(TEST_NAME): $(NAME)
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -lm; \
 			continue; \
 		fi ;\
-		if [ $$(basename $$f) = "test5.c" ]; then \
+		if  [ $$(basename $$f) = "test6.c" ]; then \
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -L . -l ft_malloc; \
-		else \
-			$(TEST_CC) -o tests/$$(basename $$f .c) $$f; \
+		else\
+			if [ $$(basename $$f) = "test6_bis.c" ]; then \
+				$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -L . -l ft_malloc; \
+			else\
+				$(TEST_CC) -o tests/$$(basename $$f .c) $$f; \
+			fi ;\
 		fi ;\
 		echo "\n$(_WHITE)$(_BOLD)$$(basename $$f)\t$(_END)$(_GREEN)[OK]\n$(_END)";\
 	done
