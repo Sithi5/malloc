@@ -28,10 +28,10 @@
 #endif
 
 #define PAGE_SIZE       (getpagesize())
-#define TINY_MAX        PAGE_SIZE / 100
-#define SMALL_MAX       PAGE_SIZE
-#define TINY_ZONE_SIZE  (PAGE_SIZE + sizeof(t_block))
-#define SMALL_ZONE_SIZE (PAGE_SIZE * 100 + sizeof(t_block))
+#define TINY_MAX        64
+#define SMALL_MAX       1024
+#define TINY_ZONE_SIZE  (PAGE_SIZE * 2 + sizeof(t_block))    // 128 * 64 if page size is 4096
+#define SMALL_ZONE_SIZE (PAGE_SIZE * 32 + sizeof(t_block))   // 128 * 1024 if page size is 4096
 
 /****************************************************************************/
 /*                          STRUCTS                                         */
@@ -67,7 +67,7 @@ extern t_malloc g_malloc;
 
 // blocks_utils
 t_block *find_free_block(t_block **last, size_t size);
-t_block *request_space(t_block *last, size_t size);
+t_block *request_space(size_t size);
 t_block *split_block(t_block *block, size_t size);
 
 // utils

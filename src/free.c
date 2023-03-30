@@ -53,9 +53,9 @@ void free(void *ptr) {
 
     // Try releasing memory zones back to the system
 
-    if (block->size <= TINY_MAX) {
+    if (block->size <= (size_t) TINY_MAX) {
         try_release_zone(&g_malloc.zone.tiny);
-    } else if (block->size <= SMALL_MAX) {
+    } else if (block->size <= (size_t) SMALL_MAX) {
         try_release_zone(&g_malloc.zone.small);
     } else {
         try_release_zone(&g_malloc.zone.large);

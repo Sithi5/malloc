@@ -14,17 +14,9 @@ void *malloc(size_t size) {
     t_block *free_block = find_free_block(&last, size);
     if (free_block == NULL) {
         // If no free block was found, request a new block from the system
-        free_block = request_space(last, size);
+        free_block = request_space(size);
         if (free_block == NULL) {
             return NULL;
-        }
-
-        if (size <= TINY_MAX && g_malloc.zone.tiny == NULL) {
-            g_malloc.zone.tiny = free_block;
-        } else if (size <= SMALL_MAX && g_malloc.zone.small == NULL) {
-            g_malloc.zone.small = free_block;
-        } else if (g_malloc.zone.large == NULL) {
-            g_malloc.zone.large = free_block;
         }
     } else {
         // If a free block was found, split it if necessary

@@ -2,16 +2,15 @@
 
 /**
  * Find a free block of memory in the memory zone
- * @param last The last block in the memory zone
  * @param size The size of the block to find
  * @return A pointer to the free block, or NULL if no free block was found
  */
 t_block *find_free_block(t_block **last, size_t size) {
     t_block *current = NULL;
 
-    if (size <= TINY_MAX) {
+    if (size <= (size_t) TINY_MAX) {
         current = g_malloc.zone.tiny;
-    } else if (size <= SMALL_MAX) {
+    } else if (size <= (size_t) SMALL_MAX) {
         current = g_malloc.zone.small;
     } else {
         current = g_malloc.zone.large;
@@ -31,7 +30,7 @@ t_block *find_free_block(t_block **last, size_t size) {
  * @param size The size of the block to request
  * @return A pointer to the new block, or NULL if the request failed
  */
-t_block *request_space(t_block *last, size_t size) {
+t_block *request_space(size_t size) {
     size_t total_size = sizeof(t_block) + size;
     size_t zone_size = 0;
     t_block *block;
@@ -39,31 +38,26 @@ t_block *request_space(t_block *last, size_t size) {
     size_t block_offset;
 
     zone = NULL;
-    if (size <= TINY_MAX) {
-        ft_putstr("Request TINY: ");
+    if (size <= (size_t) TINY_MAX) {
         zone_size = TINY_ZONE_SIZE;
         zone = g_malloc.zone.tiny;
-    } else if (size <= SMALL_MAX) {
-        ft_putstr("Request SMALL: ");
+    } else if (size <= (size_t) SMALL_MAX) {
         zone_size = SMALL_ZONE_SIZE;
         zone = g_malloc.zone.small;
     } else {
-        ft_putstr("Request LARGE: ");
+        zone_size = size;
         zone = NULL;
     }
 
-    if (zone != NULL && zone->remaining_memory >= total_size + sizeof(t_block)) {
-        ft_putstr("zone remaining memory: ");
-        ft_putnbr(zone->remaining_memory);
-        ft_putstr("\n");
+    if (zone != NULL && zone->remaining_memory >= total_size) {
         while (zone->next) {
             zone = zone->next;
         }
-        if (size <= TINY_MAX) {
+        if (size <= (size_t) TINY_MAX) {
             block_offset = TINY_ZONE_SIZE - g_malloc.zone.tiny->remaining_memory - total_size;
             block = (t_block *) ((char *) g_malloc.zone.tiny + sizeof(t_block) + block_offset);
             g_malloc.zone.tiny->remaining_memory -= total_size + sizeof(t_block);
-        } else if (size <= SMALL_MAX) {
+        } else if (size <= (size_t) SMALL_MAX) {
             block_offset = SMALL_ZONE_SIZE - g_malloc.zone.small->remaining_memory - total_size;
             block = (t_block *) ((char *) g_malloc.zone.small + sizeof(t_block) + block_offset);
             g_malloc.zone.small->remaining_memory -= total_size + sizeof(t_block);
@@ -73,9 +67,6 @@ t_block *request_space(t_block *last, size_t size) {
         block->free = false;
         zone->next = block;
     } else {
-        ft_putstr("mmap of size: ");
-        ft_putnbr(zone_size);
-        ft_putstr("\n");
         block =
             (t_block *) mmap(0, zone_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1,
                              0);   // Read and write, private, anonymous. fifth and sixth
@@ -89,17 +80,13 @@ t_block *request_space(t_block *last, size_t size) {
         block->next = NULL;
         block->free = false;
 
-        if (size <= TINY_MAX) {
+        if (size <= (size_t) TINY_MAX) {
             g_malloc.zone.tiny = block;
-            ft_putstr("\tCreating new tiny zone\n");
-        } else if (size <= SMALL_MAX) {
-            ft_putstr("\tCreating new small zone\n");
+        } else if (size <= (size_t) SMALL_MAX) {
             g_malloc.zone.small = block;
         } else if (g_malloc.zone.large == NULL) {
-            ft_putstr("\tCreating new large zone\n");
             g_malloc.zone.large = block;
         } else {
-            ft_putstr("\tAdding to large zone\n");
             while (g_malloc.zone.large->next) {
                 g_malloc.zone.large = g_malloc.zone.large->next;
             }
