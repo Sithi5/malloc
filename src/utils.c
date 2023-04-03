@@ -29,28 +29,25 @@ size_t ft_write_dec_number(size_t num) {
     return len;
 }
 
-size_t ft_write_hex_pointer(void *ptr) {
-    char hex[16];
-    unsigned long value;
+void ft_write_hex_pointer(void *ptr) {
+    char hex[18] = "0x00000000000000";   // Maximum 64-bit pointer size
+    unsigned long value = (unsigned long) ptr;
     size_t digit;
-    size_t len;
     size_t i;
 
-    hex[0] = '0';
-    hex[1] = 'x';
-    value = (unsigned long) ptr;
-    i = 14;
-    while (--i >= 2) {
+    i = 15;
+    while (value != 0) {
         digit = value % 16;
         value /= 16;
         hex[i] = (digit < 10) ? ('0' + digit) : ('A' + digit - 10);
+        i--;
     }
-    len = 0;
-    while (hex[len] != '\0') {
-        write(1, &hex[len], 1);
-        len++;
+
+    i = 0;
+    while (hex[i] != '\0') {
+        write(1, &hex[i], 1);
+        i++;
     }
-    return len;
 }
 
 void ft_putchar(char c) { write(1, &c, 1); }

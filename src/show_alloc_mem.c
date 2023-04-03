@@ -7,11 +7,11 @@ static size_t print_zone(t_block *zone) {
     while (block) {
         if (!block->free) {
             ft_write_hex_pointer((block + 1));
-            write(1, " - ", 5);
+            ft_putstr(" - ");
             ft_write_hex_pointer(((block + 1) + block->size));
-            write(1, " : ", 3);
-            ft_write_dec_number(block->size);
-            write(1, " bytes\n", 7);
+            ft_putstr(" : ");
+            ft_putnbr(block->size);
+            ft_putstr(" bytes\n");
             total += block->size;
         }
         block = block->next;
@@ -27,11 +27,11 @@ static size_t print_large_blocks(t_block *zone) {
     while (block) {
         if (!block->free) {
             ft_write_hex_pointer((block + 1));
-            write(1, " - ", 5);
+            ft_putstr(" - ");
             ft_write_hex_pointer((block->next));
-            write(1, " : ", 3);
-            ft_write_dec_number(block->size);
-            write(1, " bytes\n", 7);
+            ft_putstr(" : ");
+            ft_putdbl(block->size);
+            ft_putstr(" bytes\n");
             total += block->size;
         }
         block = block->next;
@@ -41,23 +41,23 @@ static size_t print_large_blocks(t_block *zone) {
 }
 
 static size_t show_tiny_zone() {
-    write(1, "TINY : ", 8);
+    ft_putstr("TINY : ");
     ft_write_hex_pointer(g_malloc.zone.tiny);
-    write(1, "\n", 1);
+    ft_putstr("\n");
     return print_zone(g_malloc.zone.tiny);
 }
 
 static size_t show_small_zone() {
-    write(1, "SMALL : ", 9);
+    ft_putstr("SMALL : ");
     ft_write_hex_pointer(g_malloc.zone.small);
-    write(1, "\n", 1);
+    ft_putstr("\n");
     return print_zone(g_malloc.zone.small);
 }
 
 static size_t show_large_zone() {
-    write(1, "LARGE : ", 9);
+    ft_putstr("LARGE : ");
     ft_write_hex_pointer(g_malloc.zone.large);
-    write(1, "\n", 1);
+    ft_putstr("\n");
     return print_large_blocks(g_malloc.zone.large);
 }
 
@@ -66,17 +66,17 @@ void show_alloc_mem() {
 
     total = 0;
     if (!g_malloc.zone.tiny && !g_malloc.zone.small && !g_malloc.zone.large) {
-        write(1, "No allocated memory\n", 20);
+        ft_putstr("No allocated memory\n");
         return;
     }
-    if (g_malloc.zone.tiny)
+    if (g_malloc.zone.tiny != NULL)
         total += show_tiny_zone();
-    if (g_malloc.zone.small)
+    if (g_malloc.zone.small != NULL)
         total += show_small_zone();
-    if (g_malloc.zone.large) {
+    if (g_malloc.zone.large != NULL) {
         total += show_large_zone();
     }
-    write(1, "Total : ", 8);
-    ft_write_dec_number(total);
-    write(1, " bytes\n", 7);
+    ft_putstr("Total : ");
+    ft_putdbl(total);
+    ft_putstr(" bytes\n");
 }
