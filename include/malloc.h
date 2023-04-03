@@ -30,8 +30,8 @@
 #define PAGE_SIZE       (getpagesize())
 #define TINY_MAX        64
 #define SMALL_MAX       1024
-#define TINY_ZONE_SIZE  (PAGE_SIZE * 4)                      // 128 * 64 if page size is 4096
-#define SMALL_ZONE_SIZE (PAGE_SIZE * 32 + sizeof(t_block))   // 128 * 1024 if page size is 4096
+#define TINY_ZONE_SIZE  (PAGE_SIZE * 4)    // 128 * 64 if page size is 4096
+#define SMALL_ZONE_SIZE (PAGE_SIZE * 32)   // 128 * 1024 if page size is 4096
 
 /****************************************************************************/
 /*                          STRUCTS                                         */

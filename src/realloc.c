@@ -34,9 +34,12 @@ void *realloc(void *ptr, size_t size) {
     if (block->size >= size) {
         split_block(block, size);
     } else {
+        pthread_mutex_unlock(&g_mutex);
         void *new_ptr = malloc(size);
+        pthread_mutex_lock(&g_mutex);
         if (new_ptr) {
             ft_memcpy(new_ptr, ptr, block->size);
+            pthread_mutex_unlock(&g_mutex);
             free(ptr);
         }
         pthread_mutex_unlock(&g_mutex);

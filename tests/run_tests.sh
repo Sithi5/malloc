@@ -239,10 +239,7 @@ then
 	free_quality
 fi
 
-if [ $SUMMARY -eq 1 ]
-then
-	result
-fi
+
 
 if [ $TEST_REALLOC -eq 1 ]
 then
@@ -270,7 +267,10 @@ then
 	test_show_zone_memory_usage
 fi
 
-
+if [ $SUMMARY -eq 1 ]
+then
+	result
+fi
 
 echo
 echo "That's all folks!"
