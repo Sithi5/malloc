@@ -64,6 +64,22 @@ void ft_putnbr(int nb) {
     ft_putchar(n % 10 + '0');
 }
 
+void ft_putdbl(double nb) {
+    long wholePart = (long) nb;            // get the whole number part
+    double decimalPart = nb - wholePart;   // get the decimal part
+    ft_putnbr(wholePart);                  // print the whole number part using ft_putnbr
+    if (decimalPart > 0) {
+        ft_putchar('.');         // print the decimal point
+        int decimalPlaces = 6;   // number of decimal places to print
+        while (decimalPlaces-- > 0) {
+            decimalPart *= 10;               // shift the decimal point to the right
+            int digit = (int) decimalPart;   // get the next digit
+            ft_putnbr(digit);                // print the digit using ft_putnbr
+            decimalPart -= digit;            // remove the printed digit
+        }
+    }
+}
+
 void ft_putstr(char const *str) {
     int i;
 

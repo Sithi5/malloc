@@ -84,6 +84,7 @@ void ft_putchar(char c);
 void ft_putnbr(int nb);
 void ft_putstr(char const *str);
 void *ft_memcpy(void *dest, const void *src, size_t n);
+void ft_putdbl(double nb);
 
 // free
 void free(void *ptr);

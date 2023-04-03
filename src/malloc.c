@@ -6,7 +6,6 @@ void *malloc(size_t size) {
     if (size == 0) {
         return NULL;
     }
-
     // Align size to a multiple of 8 for better memory alignment
     size = (size + 7) - (size + 7) % 8;
 

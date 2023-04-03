@@ -6,22 +6,22 @@
  * @return A pointer to the free block, or NULL if no free block was found
  */
 t_block *find_free_block(t_block **last, size_t size) {
-    t_block *current = NULL;
+    t_block *zone = NULL;
 
     if (size <= (size_t) TINY_MAX) {
-        current = g_malloc.zone.tiny;
+        zone = g_malloc.zone.tiny;
     } else if (size <= (size_t) SMALL_MAX) {
-        current = g_malloc.zone.small;
+        zone = g_malloc.zone.small;
     } else {
-        current = g_malloc.zone.large;
+        zone = g_malloc.zone.large;
     }
 
-    while (current && !(current->free && current->size >= size)) {
-        *last = current;
-        current = current->next;
+    while (zone && !(zone->free && zone->size >= size)) {
+        *last = zone;
+        zone = zone->next;
     }
 
-    return current;
+    return zone;
 }
 
 /*
