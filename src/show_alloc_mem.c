@@ -6,31 +6,11 @@ static size_t print_zone(t_block *zone) {
 
     while (block) {
         if (!block->free) {
-            ft_write_hex_pointer((block + 1));
+            ft_write_hex_pointer((block + sizeof(t_block)));
             ft_putstr(" - ");
-            ft_write_hex_pointer(((block + 1) + block->size));
+            ft_write_hex_pointer(((block + sizeof(t_block)) + block->size));
             ft_putstr(" : ");
             ft_putnbr(block->size);
-            ft_putstr(" bytes\n");
-            total += block->size;
-        }
-        block = block->next;
-    }
-
-    return total;
-}
-
-static size_t print_large_blocks(t_block *zone) {
-    size_t total = 0;
-    t_block *block = zone;
-
-    while (block) {
-        if (!block->free) {
-            ft_write_hex_pointer((block + 1));
-            ft_putstr(" - ");
-            ft_write_hex_pointer((block->next));
-            ft_putstr(" : ");
-            ft_putdbl(block->size);
             ft_putstr(" bytes\n");
             total += block->size;
         }
@@ -58,7 +38,7 @@ static size_t show_large_zone() {
     ft_putstr("LARGE : ");
     ft_write_hex_pointer(g_malloc.zone.large);
     ft_putstr("\n");
-    return print_large_blocks(g_malloc.zone.large);
+    return print_zone(g_malloc.zone.large);
 }
 
 void show_alloc_mem() {
