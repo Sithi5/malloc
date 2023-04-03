@@ -79,7 +79,7 @@ ZoneType is_valid_block(t_block *block);
 
 // utils
 size_t ft_write_dec_number(size_t num);
-size_t ft_write_hex_pointer(void *ptr);
+void ft_write_hex_pointer(void *ptr);
 void ft_putchar(char c);
 void ft_putnbr(int nb);
 void ft_putstr(char const *str);

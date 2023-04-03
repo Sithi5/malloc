@@ -7,8 +7,13 @@ int main() {
     malloc(64);
     malloc(400);
     malloc(500);
+    malloc(500);
+    malloc(500);
     malloc(1024);
-    malloc(1025);
+    malloc(1024 * 16);
+    malloc(1024 * 32);
+    malloc(1024 * 128);
+    malloc(1024 * 1024);
     show_alloc_mem();
     return (0);
 }
