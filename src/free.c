@@ -29,7 +29,9 @@ void free(void *ptr) {
     ZoneType zone_type;
     t_block *block;
 
+    pthread_mutex_lock(&g_mutex);
     if (ptr == NULL) {
+        pthread_mutex_unlock(&g_mutex);
         return;
     }
 
@@ -38,6 +40,7 @@ void free(void *ptr) {
     zone_type = is_valid_block(block);
     // Check if the block is a valid memory block
     if (zone_type == INVALID_ZONE) {
+        pthread_mutex_unlock(&g_mutex);
         return;
     }
 
@@ -69,4 +72,5 @@ void free(void *ptr) {
     } else {
         try_release_zone(&g_malloc.zone.large);
     }
+    pthread_mutex_unlock(&g_mutex);
 }

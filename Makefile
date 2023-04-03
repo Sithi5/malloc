@@ -78,7 +78,9 @@ endif
 
 SRC_NAME			:=	malloc.c							\
 						free.c 								\
+						calloc.c 							\
 						show_alloc_mem.c 					\
+						show_zone_memory_usage.c 			\
 						allocation.c 						\
 						utils.c 							\
 						blocks_utils.c 						\
@@ -156,15 +158,11 @@ $(TEST_NAME): $(NAME)
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -lm; \
 			continue; \
 		fi ;\
-		if  [ $$(basename $$f) = "test6.c" ]; then \
+		if [ $$(basename $$f) = "test_show_zone_memory_usage.c" ] || [ "$$(basename $$f)" = "test6.c" ] || [ "$$(basename $$f)" = "test6_bis.c" ]; then \
 			$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -L . -l ft_malloc; \
-		else\
-			if [ $$(basename $$f) = "test6_bis.c" ]; then \
-				$(TEST_CC) -o tests/$$(basename $$f .c) $$f -I  $(INCLUDE_PATH) -L . -l ft_malloc; \
-			else\
-				$(TEST_CC) -o tests/$$(basename $$f .c) $$f; \
-			fi ;\
+			continue; \
 		fi ;\
+		$(TEST_CC) -o tests/$$(basename $$f .c) $$f; \
 		echo "\n$(_WHITE)$(_BOLD)$$(basename $$f)\t$(_END)$(_GREEN)[OK]\n$(_END)";\
 	done
 

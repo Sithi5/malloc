@@ -30,8 +30,8 @@
 #define PAGE_SIZE       (getpagesize())
 #define TINY_MAX        64
 #define SMALL_MAX       1024
-#define TINY_ZONE_SIZE  (PAGE_SIZE * 2)    // 128 * 64 if page size is 4096
-#define SMALL_ZONE_SIZE (PAGE_SIZE * 32)   // 128 * 1024 if page size is 4096
+#define TINY_ZONE_SIZE  (PAGE_SIZE * 4)                      // 128 * 64 if page size is 4096
+#define SMALL_ZONE_SIZE (PAGE_SIZE * 32 + sizeof(t_block))   // 128 * 1024 if page size is 4096
 
 /****************************************************************************/
 /*                          STRUCTS                                         */
@@ -66,6 +66,7 @@ typedef enum { INVALID_ZONE, TINY_ZONE, SMALL_ZONE, LARGE_ZONE } ZoneType;
 /****************************************************************************/
 
 extern t_malloc g_malloc;
+extern pthread_mutex_t g_mutex;
 
 /****************************************************************************/
 /*                          FUNCTIONS DEFINITIONS                           */
@@ -85,6 +86,7 @@ void ft_putnbr(int nb);
 void ft_putstr(char const *str);
 void *ft_memcpy(void *dest, const void *src, size_t n);
 void ft_putdbl(double nb);
+void *ft_memset(void *b, int c, size_t len);
 
 // free
 void free(void *ptr);
@@ -92,10 +94,16 @@ void free(void *ptr);
 // malloc
 void *malloc(size_t size);
 
+// calloc
+void *calloc(size_t num_elements, size_t element_size);
+
 // realloc
 void *realloc(void *ptr, size_t size);
 
-// calloc
+// show_alloc_mem
 void show_alloc_mem();
+
+// show_zone_memory_usage
+void show_zone_memory_usage();
 
 #endif

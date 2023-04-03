@@ -44,6 +44,7 @@ static size_t show_large_zone() {
 void show_alloc_mem() {
     size_t total;
 
+    pthread_mutex_lock(&g_mutex);
     total = 0;
     if (!g_malloc.zone.tiny && !g_malloc.zone.small && !g_malloc.zone.large) {
         ft_putstr("No allocated memory\n");
@@ -59,4 +60,5 @@ void show_alloc_mem() {
     ft_putstr("Total : ");
     ft_putdbl(total);
     ft_putstr(" bytes\n");
+    pthread_mutex_unlock(&g_mutex);
 }
